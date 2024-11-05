@@ -19,6 +19,7 @@ class MannagerScreen extends StatefulWidget {
 class MannagerScreenState extends State<MannagerScreen> {
   int _selectedIndex = 0;
   late List<Widget> _pages; // Use late to initialize in initState
+  bool isLoading = true; // Track loading state
 
   @override
   void initState() {
@@ -54,6 +55,10 @@ class MannagerScreenState extends State<MannagerScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     userEmail = prefs.getString('email');
     if (userEmail != null) {
+      setState(() {
+        isLoading = true; // Start loading data
+      });
+
       const String apiUrl = 'https://app.axolotelabs.com/fetch_user_data.php';
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -63,11 +68,18 @@ class MannagerScreenState extends State<MannagerScreen> {
       if (response.statusCode == 200) {
         setState(() {
           userData = json.decode(response.body); // Decode the response
+          isLoading = false; // Stop loading when data is fetched
         });
       } else {
-        // Handle error response
+        setState(() {
+          isLoading = false; // Stop loading on failure
+        });
         print('Failed to load user data: ${response.statusCode}');
       }
+    } else {
+      setState(() {
+        isLoading = false; // Stop loading if no email is found
+      });
     }
   }
 
@@ -80,7 +92,9 @@ class MannagerScreenState extends State<MannagerScreen> {
     return UserDataProvider(
       userData: userData,
       child: Scaffold(
-        body: _pages[_selectedIndex], // Show the selected page
+        body: isLoading
+            ? Center(child: CircularProgressIndicator()) // Show loading spinner
+            : _pages[_selectedIndex], // Show the selected page when not loading
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor:
               _selectedIndex > 2 ? Colors.grey : const Color(0xFF7c34e9),

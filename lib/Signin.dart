@@ -15,7 +15,8 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _confirmEmailController = TextEditingController();
@@ -53,7 +54,8 @@ class _SignInScreenState extends State<SignInScreen> {
       final response = await http.post(
         Uri.parse(uploadUrl),
         body: {
-          'fullname': _fullNameController.text,
+          'fullname':
+              '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
           'username': _usernameController.text,
           'email': _emailController.text,
           'password': password,
@@ -117,27 +119,56 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Column(
                         children: [
                           const SizedBox(height: 20),
-                          // Full Name Field
-                          TextFormField(
-                            controller: _fullNameController,
-                            decoration: InputDecoration(
-                              hintText: 'Full name',
-                              filled: true,
-                              fillColor: Colors.white,
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Color(0xFFD8D8D8)),
+                          // First Name and Last Name Fields in a Row
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _firstNameController,
+                                  decoration: InputDecoration(
+                                    hintText: 'First name',
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFD8D8D8)),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your first name';
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your full name';
-                              }
-                              return null;
-                            },
+                              const SizedBox(width: 10), // Space between fields
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _lastNameController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Last name',
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFD8D8D8)),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your last name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 10),
+                          // Username Field
                           TextFormField(
                             controller: _usernameController,
                             decoration: InputDecoration(
@@ -158,6 +189,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             },
                           ),
                           const SizedBox(height: 10),
+                          // Email Field
                           TextFormField(
                             controller: _emailController,
                             decoration: InputDecoration(
@@ -181,6 +213,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             },
                           ),
                           const SizedBox(height: 10),
+                          // Confirm Email Field
                           TextFormField(
                             controller: _confirmEmailController,
                             decoration: InputDecoration(
@@ -203,6 +236,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             },
                           ),
                           const SizedBox(height: 10),
+                          // Password Field
                           TextFormField(
                             controller: _passwordController,
                             obscureText: true,
@@ -226,6 +260,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             },
                           ),
                           const SizedBox(height: 10),
+                          // Confirm Password Field
                           TextFormField(
                             controller: _confirmPasswordController,
                             obscureText: true,
@@ -249,7 +284,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             },
                           ),
                           const SizedBox(height: 20),
-                          // SignIn Button
+                          // Sign In Button
                           SizedBox(
                             height: 60,
                             width: 150,
