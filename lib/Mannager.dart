@@ -8,6 +8,7 @@ import 'Home.dart';
 import 'Quote.dart';
 import 'Accountdetails.dart';
 import 'Modifyaccount.dart';
+import 'Subscription.dart';
 
 class MannagerScreen extends StatefulWidget {
   const MannagerScreen({super.key});
@@ -30,6 +31,7 @@ class MannagerScreenState extends State<MannagerScreen> {
       const QuoteScreen(),
       const AccountDetailsScreen(),
       ModifyAccountScreen(onRefresh: refreshUserData), // Pass the callback here
+      SubscriptionScreen(onRefresh: refreshUserData), // Pass the callback here
     ];
     fetchUserData(); // Fetch user data when the screen initializes
   }

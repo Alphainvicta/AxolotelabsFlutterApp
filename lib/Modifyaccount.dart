@@ -161,7 +161,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 60.0),
                     child: Form(
@@ -192,6 +192,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                                     hintText: 'First name',
                                     filled: true,
                                     fillColor: Colors.white,
+                                    hintStyle: TextStyle(fontSize: 14),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: const BorderSide(
@@ -208,6 +209,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                                     hintText: 'Last name',
                                     filled: true,
                                     fillColor: Colors.white,
+                                    hintStyle: TextStyle(fontSize: 14),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: const BorderSide(

@@ -101,17 +101,17 @@ class _SignInScreenState extends State<SignInScreen> {
                   // Logo (SVG image)
                   SvgPicture.asset(
                     'images/Logo.svg',
-                    height: 120,
+                    height: 80,
                   ),
                   const Text(
                     'AXOLOTL LABS',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 60.0),
                     child: Form(
@@ -129,6 +129,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     hintText: 'First name',
                                     filled: true,
                                     fillColor: Colors.white,
+                                    hintStyle: TextStyle(fontSize: 14),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: const BorderSide(
@@ -151,6 +152,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     hintText: 'Last name',
                                     filled: true,
                                     fillColor: Colors.white,
+                                    hintStyle: TextStyle(fontSize: 14),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: const BorderSide(

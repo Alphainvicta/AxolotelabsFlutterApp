@@ -15,10 +15,17 @@ class AccountDetailsScreen extends StatelessWidget {
     String fullname = userData?['full_name'];
     String username = userData?['username'];
     String email = userData?['email'];
+    int? subscription =
+        userData?['subscription']; // Get subscription as integer
     String? profilePicture =
         userData?['profile_picture']; // Get profile picture URL
     String baseUrl =
         'https://app.axolotelabs.com/profile_images/'; // Base URL for images
+
+    // Determine subscription status based on the integer value
+    String subscriptionStatus = (subscription == 1)
+        ? 'Subscription: Subscribed'
+        : 'Subscription: Not Subscribed';
 
     return Scaffold(
       body: Stack(
@@ -113,6 +120,14 @@ class AccountDetailsScreen extends StatelessWidget {
                                 color: Colors.black,
                               ),
                             ),
+                            const SizedBox(height: 10),
+                            Text(
+                              subscriptionStatus,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -123,6 +138,15 @@ class AccountDetailsScreen extends StatelessWidget {
                         onTap: () {
                           // Switch to ModifyAccount tab
                           mannagerScreenState?.accountScreens(4);
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        title: const Text('Subscription Details'),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          // Switch to subscription tab
+                          mannagerScreenState?.accountScreens(5);
                         },
                       ),
                     ],

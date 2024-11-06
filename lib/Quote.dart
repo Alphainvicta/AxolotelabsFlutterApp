@@ -94,7 +94,6 @@ class _QuoteScreenState extends State<QuoteScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 20),
                     // Title
                     const Text(
                       'Get in touch!',
@@ -166,7 +165,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                     const SizedBox(height: 30),
                     // Message Text Area
                     SizedBox(
-                      height: 200, // Adjust height to ensure scroll behavior
+                      height: 150, // Adjust height to ensure scroll behavior
                       child: TextField(
                         controller: _messageController,
                         maxLines: null,
