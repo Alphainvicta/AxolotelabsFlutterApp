@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Mannager.dart'; // Import MannagerScreen for GlobalKey access
 
 class AccountDetailsScreen extends StatelessWidget {
@@ -15,32 +16,98 @@ class AccountDetailsScreen extends StatelessWidget {
     String fullname = userData?['full_name'];
     String username = userData?['username'];
     String email = userData?['email'];
-    int? subscription =
-        userData?['subscription']; // Get subscription as integer
-    String? profilePicture =
-        userData?['profile_picture']; // Get profile picture URL
-    String baseUrl =
-        'https://app.axolotelabs.com/profile_images/'; // Base URL for images
+    int? subscription = userData?['subscription'];
+    String? profilePicture = userData?['profile_picture'];
+    String baseUrl = 'https://app.axolotelabs.com/profile_images/';
 
-    // Determine subscription status based on the integer value
+    String? password;
+
     String subscriptionStatus = (subscription == 1)
         ? 'Subscription: Subscribed'
         : 'Subscription: Not Subscribed';
 
+    Future<bool> _verifyPassword(String inputPassword) async {
+      // Compare with the stored password
+      return inputPassword == password;
+    }
+
+    Future<void> _promptPasswordVerification(BuildContext context) async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      password = prefs.getString('password');
+      TextEditingController passwordController = TextEditingController();
+
+      bool isVerified = false;
+
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Password Verification'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Please enter your password to proceed:'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Password',
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the dialog
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  isVerified = await _verifyPassword(passwordController.text);
+                  if (isVerified) {
+                    // Save unhashed password to SharedPreferences
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setString(
+                        'unhashed_password', passwordController.text);
+
+                    Navigator.pop(context); // Close the dialog
+                    mannagerScreenState?.accountScreens(
+                        4); // Navigate to Modify Account screen
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Invalid password. Please try again.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Verify'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       body: Stack(
         children: [
-          // Background SVG
           Positioned.fill(
             child: SvgPicture.asset(
-              'images/AccountDetails.svg', // SVG background path
+              'images/AccountDetails.svg',
               fit: BoxFit.cover,
             ),
           ),
           Column(
             children: [
               const SizedBox(height: 20),
-              // Account Details Text
               const Text(
                 'Account details',
                 style: TextStyle(
@@ -50,20 +117,17 @@ class AccountDetailsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              // User Image
               CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.white,
                 backgroundImage: profilePicture != null
                     ? NetworkImage('$baseUrl$profilePicture')
-                    : null, // Use the profile image if available
+                    : null,
                 child: profilePicture == null
-                    ? const Icon(Icons.person, size: 60) // Default icon
-                    : null, // No child when image is used
+                    ? const Icon(Icons.person, size: 60)
+                    : null,
               ),
-
               const SizedBox(height: 30),
-              // Account Information
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: Container(
@@ -75,8 +139,7 @@ class AccountDetailsScreen extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 5,
                         blurRadius: 7,
-                        offset:
-                            const Offset(0, 3), // changes position of shadow
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -135,18 +198,24 @@ class AccountDetailsScreen extends StatelessWidget {
                       ListTile(
                         title: const Text('Modify Account Details'),
                         trailing: const Icon(Icons.arrow_forward_ios),
-                        onTap: () {
-                          // Switch to ModifyAccount tab
-                          mannagerScreenState?.accountScreens(4);
+                        onTap: () async {
+                          await _promptPasswordVerification(context);
                         },
                       ),
                       const Divider(),
                       ListTile(
-                        title: const Text('Subscription Details'),
+                        title: Text(subscription == 1
+                            ? 'Cloud Images'
+                            : 'Subscription Details'),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
-                          // Switch to subscription tab
-                          mannagerScreenState?.accountScreens(5);
+                          if (subscription == 1) {
+                            mannagerScreenState
+                                ?.accountScreens(6); // Navigate to Cloud Images
+                          } else {
+                            mannagerScreenState?.accountScreens(
+                                5); // Navigate to Subscription Details
+                          }
                         },
                       ),
                     ],

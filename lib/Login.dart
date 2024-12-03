@@ -46,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Simulate a successful login by storing login state
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('email', _emailController.text);
+          await prefs.setString('password', _passwordController.text);
           await prefs.setBool('isLoggedIn', true);
 
           // Navigate to HomeScreen after successful login

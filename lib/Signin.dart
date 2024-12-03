@@ -65,6 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (response.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('email', _emailController.text);
+        await prefs.setString('password', _passwordController.text);
         await prefs.setBool('isLoggedIn', true);
 
         Navigator.pushReplacement(

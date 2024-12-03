@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Login.dart';
 import 'Mannager.dart'; // Import MannagerScreen for GlobalKey access
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -88,7 +89,7 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.person_outline),
+                        leading: const FaIcon(FontAwesomeIcons.user),
                         title: const Text('Account Details'),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
@@ -98,7 +99,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const Divider(),
                       ListTile(
-                        leading: const Icon(Icons.search),
+                        leading: FaIcon(FontAwesomeIcons.magnifyingGlass),
                         title: const Text('Look for Services'),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
@@ -108,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const Divider(),
                       ListTile(
-                        leading: const Icon(Icons.sticky_note_2),
+                        leading: FaIcon(FontAwesomeIcons.noteSticky),
                         title: const Text('Quote'),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
@@ -118,7 +119,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const Divider(),
                       ListTile(
-                        leading: const Icon(Icons.logout, color: Colors.red),
+                        leading: const FaIcon(FontAwesomeIcons.doorOpen,
+                            color: Colors.red),
                         title: const Text(
                           'Logout',
                           style: TextStyle(color: Colors.red),

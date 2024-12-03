@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'Mannager.dart'; // Import MannagerScreen for GlobalKey access
 
 class ModifyAccountScreen extends StatefulWidget {
   final VoidCallback? onRefresh; // Make onRefresh nullable
@@ -27,9 +28,16 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
       TextEditingController();
 
   String? userEmail; // To store the fetched email
+  String? password;
 
   File? _image; // Holds the selected image
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPassword();
+  }
 
   // Method to select image (from camera or gallery)
   Future<void> _pickImage(ImageSource source) async {
@@ -39,6 +47,13 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
         _image = File(pickedImage.path);
       });
     }
+  }
+
+  Future<void> _loadPassword() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      password = prefs.getString('password');
+    });
   }
 
   // Method to handle updating user data
@@ -136,6 +151,12 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userData = UserDataProvider.of(context)?.userData;
+
+    List<String> fullname = userData?['full_name'].split(' ');
+    String username = userData?['username'];
+    String email = userData?['email'];
+
     return Scaffold(
       body: Stack(
         children: [
@@ -189,7 +210,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                                 child: TextFormField(
                                   controller: _firstNameController,
                                   decoration: InputDecoration(
-                                    hintText: 'First name',
+                                    hintText: fullname[0],
                                     filled: true,
                                     fillColor: Colors.white,
                                     hintStyle: TextStyle(fontSize: 14),
@@ -206,7 +227,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                                 child: TextFormField(
                                   controller: _lastNameController,
                                   decoration: InputDecoration(
-                                    hintText: 'Last name',
+                                    hintText: fullname[1],
                                     filled: true,
                                     fillColor: Colors.white,
                                     hintStyle: TextStyle(fontSize: 14),
@@ -225,7 +246,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                           TextFormField(
                             controller: _usernameController,
                             decoration: InputDecoration(
-                              hintText: 'Username',
+                              hintText: username,
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -240,7 +261,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                           TextFormField(
                             controller: _emailController,
                             decoration: InputDecoration(
-                              hintText: 'Email',
+                              hintText: email,
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -264,7 +285,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                           TextFormField(
                             controller: _confirmEmailController,
                             decoration: InputDecoration(
-                              hintText: 'Confirm Email',
+                              hintText: email,
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -289,7 +310,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                             controller: _passwordController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              hintText: 'Password',
+                              hintText: password.toString(),
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -313,7 +334,7 @@ class _ModifyAccountScreenState extends State<ModifyAccountScreen> {
                             controller: _confirmPasswordController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              hintText: 'Confirm Password',
+                              hintText: password.toString(),
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(

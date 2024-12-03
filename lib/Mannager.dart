@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert'; // For JSON encoding/decoding
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'Services.dart';
 import 'Home.dart';
@@ -9,6 +10,7 @@ import 'Quote.dart';
 import 'Accountdetails.dart';
 import 'Modifyaccount.dart';
 import 'Subscription.dart';
+import 'Cloud.dart';
 
 class MannagerScreen extends StatefulWidget {
   const MannagerScreen({super.key});
@@ -32,6 +34,7 @@ class MannagerScreenState extends State<MannagerScreen> {
       const AccountDetailsScreen(),
       ModifyAccountScreen(onRefresh: refreshUserData), // Pass the callback here
       SubscriptionScreen(onRefresh: refreshUserData), // Pass the callback here
+      const CloudScreen(),
     ];
     fetchUserData(); // Fetch user data when the screen initializes
   }
@@ -105,15 +108,15 @@ class MannagerScreenState extends State<MannagerScreen> {
           onTap: onItemTapped,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: FaIcon(FontAwesomeIcons.house),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
+              icon: FaIcon(FontAwesomeIcons.magnifyingGlass),
               label: 'Services',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.sticky_note_2),
+              icon: FaIcon(FontAwesomeIcons.noteSticky),
               label: 'Quote',
             ),
           ],
