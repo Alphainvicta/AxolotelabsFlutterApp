@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class CloudScreen extends StatefulWidget {
@@ -12,29 +13,28 @@ class CloudScreen extends StatefulWidget {
 }
 
 class _CloudScreenState extends State<CloudScreen> {
-  List<String> _imageUrls = [];
+  List<String> _imageNames = [];
   final Uri _uploadUri = Uri.parse('https://app.axolotelabs.com/ftp.php');
+  final String _cloudUrl = 'https://app.axolotelabs.com/cloud/';
 
   @override
   void initState() {
     super.initState();
-    _fetchImages();
+    _loadImageNames();
   }
 
-  Future<void> _fetchImages() async {
-    try {
-      final response = await http.get(_uploadUri);
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        setState(() {
-          _imageUrls = List<String>.from(data);
-        });
-      } else {
-        _showError('Failed to fetch images');
-      }
-    } catch (e) {
-      _showError('Error fetching images: $e');
-    }
+  Future<void> _loadImageNames() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _imageNames = prefs.getStringList('imageNames') ?? [];
+    });
+  }
+
+  Future<void> _saveImageName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    _imageNames.add(name);
+    await prefs.setStringList('imageNames', _imageNames);
+    setState(() {});
   }
 
   Future<void> _uploadImage() async {
@@ -51,11 +51,21 @@ class _CloudScreenState extends State<CloudScreen> {
       request.files.add(
         await http.MultipartFile.fromPath('file', imageFile.path),
       );
+
       final response = await request.send();
 
       if (response.statusCode == 200) {
-        _showMessage('Image uploaded successfully');
-        _fetchImages();
+        final responseData = await response.stream.bytesToString();
+        final decodedData = jsonDecode(responseData);
+
+        if (decodedData is Map && decodedData.containsKey('filename')) {
+          // Get filename from response and save it locally
+          final imageName = decodedData['filename'];
+          await _saveImageName(imageName);
+          _showMessage('Image uploaded successfully');
+        } else {
+          _showError('Unexpected response format');
+        }
       } else {
         _showError('Failed to upload image');
       }
@@ -91,16 +101,19 @@ class _CloudScreenState extends State<CloudScreen> {
             ),
           ),
           Expanded(
-            child: _imageUrls.isEmpty
+            child: _imageNames.isEmpty
                 ? Center(child: Text('No images found'))
                 : ListView.builder(
-                    itemCount: _imageUrls.length,
+                    itemCount: _imageNames.length,
                     itemBuilder: (context, index) {
+                      final imageUrl = '$_cloudUrl${_imageNames[index]}';
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.network(
-                          _imageUrls[index],
+                          imageUrl,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Text('Failed to load image'),
                         ),
                       );
                     },
